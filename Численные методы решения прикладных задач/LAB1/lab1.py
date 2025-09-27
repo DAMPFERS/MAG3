@@ -84,12 +84,6 @@ def simple_Iteration_Method(phi, x0 : float, eps : float, max_iter=1000) -> tupl
 
 
 
-
-
-
-
-
-
 if __name__ == "__main__":
     
     # 1 methon
