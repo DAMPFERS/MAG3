@@ -1,0 +1,18 @@
+asselin                 The Asselin de Beauville mode estimator
+distrMode               Mode of some continuous and discrete
+                        distributions
+grenander               The Grenander mode estimator
+hrm                     Bickel's half-range mode estimator
+hsm                     Half sample mode estimator
+lientz                  The empirical Lientz function and the Lientz
+                        mode estimator
+meanshift               The Meanshift mode estimator
+mlv                     Estimation of the Mode(s) or Most Likely
+                        Value(s)
+modeest                 Mode Estimation
+naive                   The Chernoff or 'naive' mode estimator
+parzen                  Parzen's Kernel mode estimator
+skewness                Skewness
+tsybakov                The Tsybakov mode estimator
+venter                  The Venter / Dalenius / LMS mode estimator
+vieu                    Vieu's mode estimator

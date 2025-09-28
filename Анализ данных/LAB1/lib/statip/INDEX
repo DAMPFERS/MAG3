@@ -1,0 +1,20 @@
+bandwidth               Bandwidth calculation
+cv                      Coefficient of variation
+dbern                   The Bernoulli distribution
+densityfun              Kernel density estimation
+distr2name              Conversion between abbreviated distribution
+                        names and proper names
+erf                     Error function
+find_breaks             Breakpoints to be passed to a Histogram
+hellinger               Hellinger distance
+histo                   Alternative Histograms
+kernel_properties       Smoothing kernels
+lagk                    Lag a vector
+mfv                     Most frequent value(s)
+midhinge                Midhinge
+midrange                Mid-range
+picor                   Piecewise-constant regression
+plot.loess              Basic plot of a loess object
+predict.default         Default model predictions
+tableNA                 Alternative Table Creation
+trimean                 Tukey's trimean

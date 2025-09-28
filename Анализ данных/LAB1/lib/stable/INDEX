@@ -1,0 +1,11 @@
+Links                   Links
+Parameter_Conversion    Easy conversion of parameters between
+                        stabledist (Nolan 1-parameterization) and
+                        stable (Lambert and Lindsey 1999)
+Parameter_Conversion_Nolan_pm1_pm0
+                        Easy conversion of parameters between
+                        stabledist Nolan 1-parameterization and
+                        0-parameterization
+dstable                 Stable Distribution
+stable.mode             Mode of a Stable Distribution
+stablereg               Stable Generalized Regression Models
