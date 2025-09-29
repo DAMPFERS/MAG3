@@ -1,0 +1,6 @@
+associations2igraph     Convert rules or itemsets into a graph
+inspectDT               Inspect Associations Interactively Using
+                        datatable
+plot_arulesViz          Visualize Association Rules and Itemsets
+ruleExplorer            Explore Association Rules Interactively
+rules2groupedMatrix     Convert association rules into a matrix

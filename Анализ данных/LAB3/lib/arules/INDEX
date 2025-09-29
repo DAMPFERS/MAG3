@@ -1,0 +1,84 @@
+APappearance-class      Class APappearance - Specifying the appearance
+                        Argument of Apriori to Implement Rule Templates
+AScontrol-classes       Classes AScontrol, APcontrol, ECcontrol -
+                        Specifying the control Argument of Apriori and
+                        Eclat
+ASparameter-classes     Classes ASparameter, APparameter, ECparameter -
+                        Specifying the parameter Argument of APRIORI
+                        and ECLAT
+Adult                   Adult Data Set
+DATAFRAME               Data.frame Representation for arules Objects
+Epub                    The Epub Transactions Data Set
+Groceries               The Groceries Transactions Data Set
+Income                  The Income Data Set
+LIST                    List Representation for Objects Based on Class
+                        itemMatrix
+Mushroom                The Mushroom Data Set as Transactions
+SunBai                  The SunBai Weighted Transactions Data Set
+abbreviate              Abbreviate item labels in transactions,
+                        itemMatrix and associations
+addComplement           Add Complement-items to Transactions
+affinity                Computing Affinity Between Items
+apriori                 Mining Associations with the Apriori Algorithm
+associations-class      Class associations - A Set of Associations
+c                       Combining Association and Transaction Objects
+confint                 Confidence Intervals for Interest Measures for
+                        Association Rules
+coverage                Calculate coverage for rules
+crossTable              Cross-tabulate joint occurrences across pairs
+                        of items
+discretize              Convert a Continuous Variable into a
+                        Categorical Variable
+dissimilarity           Dissimilarity Matrix Computation for
+                        Associations and Transactions
+duplicated              Find Duplicated Elements
+eclat                   Mining Associations with Eclat
+extract                 Methods for "[": Extraction or Subsetting
+                        arules Objects
+fim4r                   Interface to Mining Algorithms from fim4r
+hierarchy               Support for Item Hierarchies
+hits                    Computing Transaction Weights With HITS
+image                   Visual Inspection of Binary Incidence Matrices
+inspect                 Display Associations and Transactions in
+                        Readable Form
+interestMeasure         Calculate Additional Interest Measures
+is.closed               Find Closed Itemsets
+is.generator            Find Generator Itemsets
+is.maximal              Find Maximal Itemsets
+is.redundant            Find Redundant Rules
+is.significant          Find Significant Rules
+is.superset             Find Super and Subsets
+itemCoding              Item Coding - Conversion between Item Labels
+                        and Column IDs
+itemFrequency           Getting Frequency/Support for Single Items
+itemFrequencyPlot       Creating a Item Frequencies/Support Bar Plot
+itemMatrix-class        Class itemMatrix - Sparse Binary Incidence
+                        Matrix to Represent Sets of Items
+itemsets-class          Class itemsets - A Set of Itemsets
+itemwiseSetOps          Itemwise Set Operations
+match                   Value Matching
+merge                   Adding Items to Data
+pmml                    Read and Write PMML
+predict                 Model Predictions
+proximity-classes       Classes dist, ar_cross_dissimilarity and
+                        ar_similarity - Proximity Matrices
+random.transactions     Simulate a Random Transactions
+read                    Read Transaction Data
+ruleInduction           Association Rule Induction from Itemsets
+rules-class             Class rules - A Set of Rules
+sample                  Random Samples and Permutations
+sets                    Set Operations
+size                    Number of Items in Sets
+sort                    Sort Associations
+subset                  Subsetting Itemsets, Rules and Transactions
+support                 Support Counting for Itemsets
+supportingTransactions
+                        Supporting Transactions
+tidLists-class          Class tidLists - Transaction ID Lists for
+                        Items/Itemsets
+transactions-class      Class transactions - Binary Incidence Matrix
+                        for Transactions
+unique                  Remove Duplicated Elements from a Collection
+weclat                  Mining Associations from Weighted Transaction
+                        Data with Eclat (WARM)
+write                   Write Transactions or Associations to a File
