@@ -8,7 +8,7 @@ Polygon = List[Point]
 Edge = Tuple[Point, Point]
 
 
-def buiildOccupancyGrid(points_world: List[Point], resolution=0.05, padding=0.05) -> Tuple:
+def buiildOccupancyGrid(points_world: List[Point], resolution=0.05, padding=0.5) -> Tuple:
     """
     Построение сетки занятости (occupancy grid) на основе массива точек в глобальных координатах
 
@@ -43,6 +43,6 @@ def buiildOccupancyGrid(points_world: List[Point], resolution=0.05, padding=0.05
     # фильтруются только те индексы, которые попадают в границы сетки
     inds_x = inds_x[valid]
     inds_y = inds_y[valid]
-    grid[inds_y, inds_x] = 1                                                # в ячейках сетки, соответствующих координатам точек, устанавливается значение 1 (занятая ячейка)
+    grid[inds_x, inds_y] = 1                                                # в ячейках сетки, соответствующих координатам точек, устанавливается значение 1 (занятая ячейка)
     
     return grid, min_xy, resolution
