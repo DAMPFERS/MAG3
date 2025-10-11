@@ -1,0 +1,9 @@
+# разместите в пустой директории, поместите в файл docker-compose.yaml
+services:
+  app:
+    image: dvivanov/aido-student-image:2024
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+    volumes:
+      - .:/home/appuser/student
