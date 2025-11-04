@@ -1,4 +1,5 @@
 
+
 evaluate_model_residuals <- function(model, actual_values, label_) {
   residuals_val <- residuals(model)
   # (Min error)
@@ -90,9 +91,12 @@ zptr <- columns.zptr.data
 t <- columns.t.data
 
 model1 <- nls(
-  zptr ~ a *(b^t),
+  #zptr ~ a *(b^t),
+  # zptr ~ a + b * t,
+  zptr ~ k / (1 + a * exp(-b * t)),
   data = data,
-  start = list(a = 100, b = 1.01)
+  start = list(k = max(zptr)*1.1, a = 10, b = 0.1),
+  # start = list(a = 100, b = 1.01)
 ) # Подгонка модели
 
 coef(model1)
@@ -190,10 +194,13 @@ evaluate_model_residuals(
 summary(zptr)
 summary(t)
 model3 <- nls(
-    zptr ~ a *(b^t) + 
+    # zptr ~ a *(b^t) +
+    # zptr ~ a + b * t +  
+    zptr ~ k / (1 + a * exp(-b * t)) + 
     b1 * cos(2 * pi * t / 12) + b2 * sin(2 * pi * t / 12)
     + b3 * cos(2 * 4 * pi * t / 12) + b4 * sin(2 * 4 * pi * t / 12),
-    start = list(a = 100, b = 1.01,
+    # start = list(a = 100, b = 1.01,  
+    start = list(k = max(zptr)*1.1, a = 10, b = 0.1
                b1 = 100, b2 = 100, b3 = 50, b4 = 50)
 )
 summary(model3)
@@ -237,6 +244,25 @@ m3_acc
 
 next_three_t <- seq(from = length(t) + 1, length.out = 3, by = 1)
 predict(model3, newdata = data.frame(x = next_three_t))
+
+
+
+residuals_no_trend <- residuals(model3)
+plot(
+  t,
+  residuals_no_trend,
+  type = "l",
+  main = "Residuals"
+)
+
+periodogram <- spec.pgram(
+  ts(residuals_no_trend, frequency = 12, start = c(2007, 1)),
+  detrend = FALSE, log = "no",
+  fast = FALSE, plot = TRUE,
+  main = "Periodogram"
+)
+
+
 
 # data.frame(
 #   ModelName = c("Trend", "Trend+Seasonal"),

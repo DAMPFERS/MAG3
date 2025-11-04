@@ -1,6 +1,7 @@
 #   Построение occupancy-grid карты
 
 import numpy as np
+from bresenham import bresenhamLine
 
 from typing import List, Tuple
 Point = Tuple[float, float]
@@ -49,3 +50,56 @@ def buiildOccupancyGrid(points_world: List[Point], resolution=0.05, padding=0.5)
     grid[inds_x, inds_y] = 1                                                # в ячейках сетки, соответствующих координатам точек, устанавливается значение 1 (занятая ячейка)
     
     return grid, min_xy, resolution
+
+
+def updateOccupancyGrid(grid: np.ndarray, origin: Point, resolution: float, 
+                       scanner_pose: List[float], points_world: List[Point],
+                       free_weight=0.3, occupied_weight=0.7) -> np.ndarray:
+    """
+    Обновляет occupancy grid на основе нового скана
+    
+    Args:
+        grid: текущая сетка занятости
+        origin: начало координат сетки
+        resolution: размер ячейки
+        scanner_pose: поза сканера [x, y, theta]
+        points_world: точки скана в глобальных координатах
+        free_weight: вес для свободных ячеек
+        occupied_weight: вес для занятых ячеек
+    
+    Returns:
+        Обновленная сетка занятости
+    """
+    grid = grid.astype(np.float32)  # перевод в float для весов
+    
+    # преобразование позы сканера в координаты сетки
+    scanner_x, scanner_y = scanner_pose[:2]
+    scanner_ix = int((scanner_x - origin[0]) / resolution)
+    scanner_iy = int((scanner_y - origin[1]) / resolution)
+    
+    # обновление занятых ячеек (точки попадания луча)
+    for point in points_world:
+        px, py = point
+        ix = int((px - origin[0]) / resolution)
+        iy = int((py - origin[1]) / resolution)
+        
+        if 0 <= ix < grid.shape[0] and 0 <= iy < grid.shape[1]:
+            grid[ix, iy] += occupied_weight
+            
+    # обновление свободных ячеек (лучи от сканера до точек)
+    for point in points_world:
+        px, py = point
+        ix = int((px - origin[0]) / resolution)
+        iy = int((py - origin[1]) / resolution)
+        
+        # получение всех ячеек вдоль луча
+        line_points = bresenhamLine((scanner_ix, scanner_iy), (ix, iy))
+        
+        for cell_ix, cell_iy in line_points[:-1]:  # Исключаем конечную точку (она занятая)
+            if 0 <= cell_ix < grid.shape[0] and 0 <= cell_iy < grid.shape[1]:
+                grid[cell_ix, cell_iy] -= free_weight
+    
+    # нормализация значения в диапазон [0, 1]
+    grid = np.clip(grid, 0, 1)
+    
+    return grid

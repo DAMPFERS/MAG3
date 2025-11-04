@@ -28,7 +28,7 @@ def scoreScanOnMap(grid: List, origin: Point, resolution: float, points_world: L
         float:  Оценка (score [0 ; 1]) совпадения скана с картой = среднее значение занятости ячеек, на которые попали точки скана
     """
     nx, ny = grid.shape     # количество ячеек по осям x и y
-    
+
     # смещение точки относительно начала сетки, делённое на размер ячейки
     # ix = ((points_world[:,0] - origin[0]) / resolution).astype(int)    # округление до ближайшего целого числа (индекс ячейки)        
     # iy = ((points_world[:,1] - origin[1]) / resolution).astype(int)
@@ -74,8 +74,7 @@ def doScanMatchingMapBruteForce(grid: List, origin: Point, resolution: float, po
             best_pose — лучшая найденная поза
             best_score — оценка совпадения для лучшей позы
     """
-    
-    
+
     pts_local2, mask = simulation_laser.scanToPointsLocal(ranges2, angles2) # преобразование скана 2 в локальные точки
     
     # Проверка на пустые данные скана
@@ -89,15 +88,20 @@ def doScanMatchingMapBruteForce(grid: List, origin: Point, resolution: float, po
     
     # многоуровневый перебор: сначала грубый, затем уточнения
     search_radius_level = search_radius     # Текущий радиус поиска (уменьшается на каждой итерации)
+    
+    # print("center ", center)
     for it in range(refine_iters):          # Количество итераций уточнения (по умолчанию 2)
         nx, ny, ntheta = coarse_steps
-        
+        # print("search_radius_level ", search_radius_level)
+        # print("nx, ny, ntheta ", nx, ny, ntheta)
         # массивы смещений по осям x и y в пределах [-search_radius_level, search_radius_level] с количеством шагов nx и ny
         dxs = np.linspace(start=-search_radius_level, stop=search_radius_level, num=nx)
         dys = np.linspace(start=-search_radius_level, stop=search_radius_level, num=ny)
         # (it == 0) — полный диапазон [-pi, pi] с ntheta шагами
-        thetas = np.linspace(start=-pi, stop=pi, num=ntheta, endpoint=False) if it==0 else np.linspace(start=-0.2, stop=0.2, num=ntheta)  #  массив угловых смещений
-        
+        thetas = np.linspace(start=-pi, stop=pi, num=ntheta, endpoint=False) if it==0 else np.linspace(start=-0.5, stop=0.5, num=ntheta)  #  массив угловых смещений
+        # print("dxs ", dxs)
+        # print("dys ", dys)
+        # print("thetas ", thetas, '\n')
         best_local_pose = None  # лучшая поза на текущем уровне поиска
         best_local_score = -1   # лучшая оценка совпадения на текущем уровне поиска
         
@@ -109,7 +113,7 @@ def doScanMatchingMapBruteForce(grid: List, origin: Point, resolution: float, po
                 for dth in thetas:
                     cand_pose = np.array([trans[0], trans[1], utils_poses_and_points.wrapToPi(center[2] + dth)])    # кандидат на лучшую позу — текущая позиция и угол
                     pts_world = utils_poses_and_points.transformPoints(pts_local2, cand_pose)   # преобразование точек скана из локальной системы координат в глобальную, используя текущую кандидатскую позу cand_pose
-                    
+
                     # Проверка на пустые точки после преобразования
                     if len(pts_world) == 0:     continue
                     
