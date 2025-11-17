@@ -29,9 +29,10 @@ def scoreScanOnMap(grid: List, origin: Point, resolution: float, points_world: L
     """
     nx, ny = grid.shape     # количество ячеек по осям x и y
 
-    # смещение точки относительно начала сетки, делённое на размер ячейки
+    
     # ix = ((points_world[:,0] - origin[0]) / resolution).astype(int)    # округление до ближайшего целого числа (индекс ячейки)        
     # iy = ((points_world[:,1] - origin[1]) / resolution).astype(int)
+    # смещение точки относительно начала сетки, делённое на размер ячейки
     ix = np.floor((points_world[:,0] - origin[0]) / resolution).astype(int)
     iy = np.floor((points_world[:,1] - origin[1]) / resolution).astype(int)
     # маска проверяет, что индексы ix и iy находятся в пределах сетки

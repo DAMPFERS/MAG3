@@ -38,7 +38,7 @@ def buiildOccupancyGrid(points_world: List[Point], resolution=0.05, padding=0.5)
     # для каждой точки вычисляется её положение в сетке
     # inds_x = ((points_world[:,0] - min_xy[0]) / resolution).astype(int)     # преобразование координаты x точки в индекс ячейки по оси x
     # inds_y = ((points_world[:,1] - min_xy[1]) / resolution).astype(int)     # преобразование координаты y точки в индекс ячейки по оси y
-    inds_x = np.floor((points_world[:,0] - min_xy[0]) / resolution).astype(int)
+    inds_x = np.floor((points_world[:,0] - min_xy[0]) / resolution).astype(int) # преобразование координаты x точки в индекс ячейки по оси x
     inds_y = np.floor((points_world[:,1] - min_xy[1]) / resolution).astype(int)
     
     

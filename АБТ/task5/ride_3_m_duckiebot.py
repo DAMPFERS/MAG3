@@ -28,10 +28,13 @@ class Ride3MDuckiebotTaskSolution(TaskSolution):
         obs, _, _, _ = env.step([0, 0])  # Получаем начальное наблюдение
         env.render()  # Рендерим среду
 
-        # Параметры управления
+        # Получаем начальную позицию
+        start_pos = env.cur_pos.copy()
+        print(f"Стартовая позиция: {start_pos}")
+
         linear_velocity = 0.0     
         angular_velocity = 0.0    
-        distance_to_travel = 3.01  # Расстояние, которое нужно проехать (метры)
+        distance_to_travel = 3.0  # Расстояние, которое нужно проехать (метры)
         distance_traveled = 0.0   # Пройденное расстояние
 
         # Начальное время
@@ -47,22 +50,22 @@ class Ride3MDuckiebotTaskSolution(TaskSolution):
             if red_pixels > 5000:       linear_velocity = 0.0  # Останавка
             else:                       linear_velocity = 0.4 
 
-            # Шаг
-            # print("STEP") 
             obs, _, _, _ = env.step([linear_velocity, angular_velocity])
             env.render()
 
-            # Обновление пройденного расстояния
-            current_time = time()
-            time_elapsed = current_time - start_time
+
             
-            # print("time_elapsed ", time_elapsed)
-            distance_traveled += linear_velocity * time_elapsed
-            print(f"distance: {distance_traveled:.2f} m, t: {time() - t0:.2f}")
-            start_time = current_time
-            # env.render()
+             # Вычисляем фактическое пройденное расстояние
+            current_pos = env.cur_pos
+            # Вычисляем расстояние по оси X (направление движения)
+            distance_traveled = abs(current_pos[0] - start_pos[0])
+            
+            print(f"distance: {distance_traveled:.2f} m, pos: {current_pos}")
             
             
         print("СТОП")
-        # env.render()
+        for _ in range(10):
+            obs, _, _, _ = env.step([0, 0])
+            env.render()
+
 

@@ -16,7 +16,7 @@ class StraightCornerTaskSolution(TaskSolution):
             Возвращает True, если перекресток обнаружен, иначе False.
             """
             # Ищем красные пиксели в нижней половине изображения
-            pixels = countNonZero(inRange(src=img[320:480, 256:640], lowerb=(155, 0, 0), upperb=(255, 100, 100)))
+            pixels = countNonZero(inRange(src=img[320:480, 250:640], lowerb=(155, 0, 0), upperb=(255, 100, 100)))
             print("Красных пикселей: ", pixels)
             return pixels > 15000  # Порог для обнаружения перекрестка
         
@@ -40,7 +40,7 @@ class StraightCornerTaskSolution(TaskSolution):
 
             # Если робот на перекрестке, двигаемся прямо
             if onCrossRoad:
-                for tick in range(27):      # Проезд перекрестка за 27 шагов
+                for tick in range(28):      # Проезд перекрестка за n шагов
                     obs, _, _, _ = env.step([linear_velocity, angular_velocity])
                     env.render()
                 break  # Завершаем задачу после проезда перекрестка

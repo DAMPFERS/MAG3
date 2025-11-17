@@ -113,7 +113,7 @@ def main0():
     pts1_local, mask1 = simulation_laser.scanToPointsLocal(ranges1, angles)
     pts1_world = utils_poses_and_points.transformPoints(pts1_local, pose1)
     
-    grid, origin, res = occupancy_grid.buiildOccupancyGrid(pts1_world, resolution=0.2, padding=0.5)
+    grid, origin, res = occupancy_grid.buiildOccupancyGrid(pts1_world, resolution=0.15, padding=0.5)
 
     # Сканирование карты brute-force
     # pose_delta_bf, best_pose_bf, score_bf = brute_force.doScanMatchingMapBruteForce(grid, origin, res, pose1, ranges2, angles, search_radius=max(w, h), coarse_steps=(30, 30, 52), refine_iters=2)
@@ -183,7 +183,7 @@ def main():
     print(f"Реальная площадь комнаты: {real_area:.2f} кв.м.")
     
     # генерация последовательности поз (10-20 сканов)
-    flag_ICP = False
+    # flag_ICP = False
     num_scans = 20
     resolution = 0.15
     
@@ -255,7 +255,7 @@ def main():
             )
             
             # ICP
-            if flag_ICP:    best_pose, pose_delta_icp = icp.doICP(pts_world, ranges, angles, best_pose)
+            # if flag_ICP:    best_pose, pose_delta_icp = icp.doICP(pts_world, ranges, angles, best_pose)
             
             estimated_poses.append(best_pose)
             print(f"Найдена поза: {best_pose}, score: {score:.3f}")
@@ -456,4 +456,4 @@ def main2():
 
 
 if __name__ == "__main__":
-    main2()
+    main()
