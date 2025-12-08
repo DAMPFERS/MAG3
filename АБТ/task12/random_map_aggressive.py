@@ -2,12 +2,106 @@ from gym_duckietown.tasks.task_solution import TaskSolution
 import numpy as np
 import cv2
 import math
+import time
 
 
-class RandomMapTaskSolution(TaskSolution):
+class RandomMapAggressiveTaskSolution(TaskSolution):
     def __init__(self, generated_task):
         super().__init__(generated_task)
+        
+        self.last_robot_check = 0
 
+    
+    def detectRoadLine(self, obs):
+        obs2 = obs[250:480, 0:640]
+        color_start_range = (150, 150, 0)
+        color_end_range = (255, 255, 150)
+        color_filter_mask = cv2.inRange(
+            src=obs2,
+            lowerb=color_start_range,
+            upperb=color_end_range
+        )
+        M = cv2.moments(color_filter_mask)
+        if M["m00"] < 8000:
+            return 0
+        cx = int(M["m10"] / M["m00"])
+        target_cx = obs2.shape[1] // 2 - 120
+        offset = cx - target_cx
+        return offset
+    
+    
+    def detectOtherRobots(self, obs):
+        robots = []
+        height, width = obs.shape[:2]
+        hsv = cv2.cvtColor(obs, cv2.COLOR_BGR2HSV)
+        
+        color_ranges = [
+            ((0, 100, 100), (10, 255, 255)),
+            ((100, 100, 100), (130, 255, 255)),
+            ((35, 100, 100), (85, 255, 255)),
+            ((160, 100, 100), (180, 255, 255)),
+        ]
+        
+        for (lower, upper) in color_ranges:
+            mask = cv2.inRange(hsv, np.array(lower), np.array(upper))
+            contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            
+            for contour in contours:
+                if cv2.contourArea(contour) > 100:
+                    M = cv2.moments(contour)
+                    if M["m00"] > 0:
+                        cx = int(M["m10"] / M["m00"])
+                        cy = int(M["m01"] / M["m00"])
+                        distance = (height - cy) / height * 2.0
+                        if distance < 0.4 and abs(cx - width//2) < 100:
+                            robots.append({"distance": distance})
+        
+        return robots
+    
+    
+    
+        # Объезд робота с левой стороны
+    def avoidRobot(self, env, robots):
+        print("Объезд ")
+        for _ in range(15):
+            env.step([0.2, 0.6])
+            env.render()
+        for _ in range(20):
+            env.step([0.3, 0.0])
+            env.render()
+        for _ in range(20):
+            env.step([0.2, -0.6])
+            env.render()
+        print("Объезд конец")
+        
+        
+    def initializeCar(self, env):
+        for i in range(80):
+            line = env.get_lane_pos2(env.cur_pos, env.cur_angle)
+            
+            # Простой П-регулятор
+            angular_velocity = line.angle_rad * 3.0 - line.dist * 4.0
+            
+            if abs(angular_velocity) < 0.4:  # Минимум 0.4!
+                angular_velocity = 0.4 if angular_velocity > 0 else -0.4
+            
+            angular_velocity = max(-1.0, min(1.0, angular_velocity))
+            
+            # Всегда двигаемся вперед
+            env.step([0.12, angular_velocity])
+            env.render()
+            
+            if i % 20 == 0:
+                print(f"Шаг {i}: steering={angular_velocity:.2f}")
+            
+            if abs(line.dist) < 0.03 and abs(line.angle_rad) < math.radians(10):
+                print(f"Выровнено за {i} шагов")
+                return True
+        #
+        print("Выравнивание было")
+        return True
+    
+    
     # -------------------------------------------------------
     # 1. Детекция смещения от жёлтой линии (PID)
     # -------------------------------------------------------
@@ -213,14 +307,26 @@ class RandomMapTaskSolution(TaskSolution):
         target_coordinates = self.generated_task["target_coordinates"][0]
 
         goal = np.array([target_coordinates[0], target_coordinates[2]])
-        max_steps = 10000
+        
+        # self.initializeCar(env)
 
         step = 0
         print("Target:", goal)
         i = 0
+        
+        lane_safe_offset = 100
         while True:
 
             obs, _, _, _ = env.step([0, 0])
+            
+            # Проверка других роботов
+            current_time = time.time()
+            if current_time - self.last_robot_check > 0.5:
+                robots = self.detectOtherRobots(obs)
+                if robots:
+                    self.avoidRobot(env, robots)
+                    continue
+                self.last_robot_check = current_time
             env.render()
 
             # Проверка достижения цели
@@ -270,11 +376,34 @@ class RandomMapTaskSolution(TaskSolution):
                 continue
 
             # ---- Обычное движение по линии ----
-            error, found = self.detectLaneOffset(obs)
+            # error, found = self.detectLaneOffset(obs)
 
-            if not found:
-                print("not found")
-                action = [0.0, -1.0]
+            offset = self.detectRoadLine(obs)
+            
+            if offset == 0:
+                print("Потеряcь полоса :(")
+                obs, _, _, _ = env.step([0.0, -1.0])
+                env.render()
+                continue
+            
+            
+            if offset > lane_safe_offset:
+                angular = -0.6
+                linear = 0.05
+            elif offset < -lane_safe_offset:
+                angular = 0.3
+                linear = 0.1
+            else:
+                Kp = 0.005
+                angular = -Kp * offset
+                speed_factor = 1.0 - min(abs(offset) / 200.0, 0.6)
+                linear = max(0.1, 0.5 * speed_factor)
+                angular = max(-0.6, min(0.6, angular))
+            
+            action = [linear, angular]
+            # if not found:
+                # print("not found")
+                # action = [0.0, -1.0]
                 # while (not found) and i <= 8:
                 # if i < 4: action = [0.0, -1.0]
                 # elif i > 4 and i < 8: action = [0.0, 1.0]
@@ -286,12 +415,12 @@ class RandomMapTaskSolution(TaskSolution):
                     # env.step(action)
                     # env.render()
                 # action = [0.0, -float(self.getGoalAngle(env, target_coordinates))]
-            else:
-                i = 0
-                Kp = 0.005
-                angular = -Kp * error
-                linear = max(0.15, 0.9 - abs(angular))
-                action = [linear, angular]
+            # else:
+                # i = 0
+                # Kp = 0.005
+                # angular = -Kp * error
+                # linear = max(0.15, 0.9 - abs(angular))
+                # action = [linear, angular]
 
             env.step(action)
             env.render()
